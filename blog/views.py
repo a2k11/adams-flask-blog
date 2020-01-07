@@ -3,6 +3,7 @@ from slugify import slugify
 
 from application import db
 from author.models import Author
+from author.decorators import login_required
 from blog.models import Post, Category
 from blog.forms import PostForm
 
@@ -13,6 +14,7 @@ def index():
     return render_template('blog/index.html')
 
 @blog_app.route('/post', methods=('GET', 'POST'))
+@login_required
 def post():
     form = PostForm()
 
