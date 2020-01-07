@@ -1,9 +1,20 @@
-from flask import Blueprint, session
+from flask import Blueprint, session, render_template
+
+from application import db
+from author.models import Author
+from blog.models import Post, Category
+from blog.forms import PostForm
 
 blog_app = Blueprint('blog_app', __name__)
 
 @blog_app.route('/')
 def index():
-    if session.get('full_name'):
-        return f"Hi { session['full_name'] }"
-    return 'Blog Home'
+    return render_template('blog/index.html')
+
+@blog_app.route('/post', methods=('GET', 'POST'))
+def post():
+    form = PostForm()
+
+    return render_template('blog/post.html',
+        form=form
+    )
