@@ -1,4 +1,4 @@
-from flask import Blueprint, session, render_template, flash, redirect, url_for
+from flask import Blueprint, session, render_template, flash, redirect, url_for, request
 from slugify import slugify
 
 from application import db
@@ -8,10 +8,14 @@ from blog.models import Post, Category
 from blog.forms import PostForm
 
 blog_app = Blueprint('blog_app', __name__)
+POSTS_PER_PAGE = 5
 
 @blog_app.route('/')
 def index():
-    return render_template('blog/index.html')
+    page = int(request.values.get('page', '1'))
+    posts = Post.query.filter_by(live=True).order_by(Post.publish_date.desc()) \
+        .paginate(page, POSTS_PER_PAGE, False)
+    return render_template('blog/index.html', posts=posts)
 
 @blog_app.route('/post', methods=('GET', 'POST'))
 @login_required
@@ -47,9 +51,7 @@ def post():
         flash('Article Posted')
         return redirect(url_for('.article', slug=slug))
 
-    return render_template('blog/post.html',
-        form=form
-    )
+    return render_template('blog/post.html', form=form)
 
 @blog_app.route('/posts/<slug>')
 def article(slug):
