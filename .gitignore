@@ -133,3 +133,4 @@ dmypy.json
 
 # settings
 .flaskenv
+static/images/uploads/
