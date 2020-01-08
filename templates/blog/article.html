@@ -11,7 +11,7 @@
     {% include '_flashmessages.html' %}
     {% if post.image %}
     <div class="container pt-3">
-      <img src="{{ url_for('static', filename='images/uploads/' + post.image + '.lg.png') }}" class="img-fluid">
+      <img src="{{ url_for('static', filename='images/uploads/' + post.image + '.lg.png') }}" class="img-fluid" />
     </div>
     {% endif %}
     <h1 class="pt-3">{{ post.title }}</h1>
@@ -21,6 +21,9 @@
       Posted by {{ post.author.full_name }} on {{ post.publish_date.strftime('%Y-%m-%d') }}
       {% if post.category %}
       {{ post.category.name }}
+      {% endif %}
+      {% if session.id %}
+        <a href="{{ url_for('.edit', slug=post.slug) }}">Edit</a>
       {% endif %}
     </div>
   </div>
