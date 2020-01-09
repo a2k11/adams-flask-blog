@@ -62,3 +62,22 @@ class PostTest(unittest.TestCase):
             follow_redirects = True)
         assert 'Article Posted' in str(rv.data)
         assert 'dumb' in str(rv.data)
+
+    def test_blog_post_update_delete(self):
+        rv = self.app.post('/register', data=self.user_dict())
+        rv = self.app.post('/login', data=self.user_dict())
+        rv = self.app.post('/post', data=self.post_dict())
+
+        post2 = self.post_dict()
+        post2['title'] = 'A funny post'
+        rv = self.app.post('edit/1-' + slugify(self.post_dict()['title']),
+            data = post2,
+            follow_redirects = True
+        )
+        assert 'Article Edited' in str(rv.data)
+        assert 'A funny post' in str(rv.data)
+
+        rv = self.app.get('/delete/1-' + slugify(post2['title']),
+            follow_redirects = True
+        )
+        assert 'Article Deleted' in str(rv.data)
