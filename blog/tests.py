@@ -48,7 +48,8 @@ class PostTest(unittest.TestCase):
         return dict(
             title = 'The Big Post',
             body = 'I want to make a toast, I mean post.',
-            new_category = 'dumb'
+            new_category = 'dumb',
+            tags_field = 'smart, funny'
         )
 
     def test_blog_post_create(self):
@@ -70,12 +71,14 @@ class PostTest(unittest.TestCase):
 
         post2 = self.post_dict()
         post2['title'] = 'A funny post'
+        post2['tags_field'] = 'ridiculous'
         rv = self.app.post('edit/1-' + slugify(self.post_dict()['title']),
             data = post2,
             follow_redirects = True
         )
         assert 'Article Edited' in str(rv.data)
         assert 'A funny post' in str(rv.data)
+        assert 'smart' not in str(rv.data)
 
         rv = self.app.get('/delete/1-' + slugify(post2['title']),
             follow_redirects = True

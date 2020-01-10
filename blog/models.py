@@ -2,6 +2,12 @@ from datetime import datetime
 
 from application import db
 
+# associaton table
+tag_x_post = db.Table('tag_x_post',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
+)
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
@@ -17,6 +23,9 @@ class Post(db.Model):
         backref=db.backref('posts', lazy='dynamic'))
 
     category = db.relationship('Category',
+        backref=db.backref('posts', lazy='dynamic'))
+
+    tags = db.relationship('Tag', secondary=tag_x_post, lazy='subquery',
         backref=db.backref('posts', lazy='dynamic'))
 
     def __init__(self, author, title, body, image=None, category=None,
@@ -38,6 +47,16 @@ class Post(db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return self.name
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)
 
     def __init__(self, name):
         self.name = name
